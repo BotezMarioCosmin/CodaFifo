@@ -10,15 +10,17 @@ namespace CodaFifo
     {
         static void Main(string[] args)
         {
-            MyStack stack = new MyStack();
-            stack.Push("B");
-            stack.Push("A");
-            Console.WriteLine(stack);
+            MyQueue queue = new MyQueue();
+            queue.Enqueue("primo");
+            queue.Enqueue("secondo");
+            queue.Enqueue("terzo");
+            Console.WriteLine(queue.ToString());
 
-            Console.WriteLine(stack.getInverseOrder());
+            queue.Dequeue();
+            Console.WriteLine(queue.ToString());
 
-
-            Console.WriteLine(stack);
+            Console.WriteLine(queue.getHead());
+            Console.ReadKey();
         }
 
     }
@@ -43,83 +45,81 @@ namespace CodaFifo
 
     }
 
-    public class MyStack
+    public class MyQueue
     {
+        private Node Head { get; set; }
 
-        private Node Top { get; set; }
-
-        public MyStack()
+        public MyQueue()
         {
-            Top = null;
+            Head = null;
         }
 
-        public void Push(string element)
+        public void Enqueue(string element)
         {
-
-            Node tmp = new Node(element);
-
-            tmp.Next = Top;
-
-            Top = tmp;
-
-        }
-
-        public string Pop()
-        {
-
-            if (Top == null)
+            if (Head == null)
             {
-                throw new Exception("empty stack");
+                Head = new Node(element);
+            }
+            else
+            {
+                Node tmp = Head;
+
+                while (tmp.Next != null)
+                {
+                    tmp = tmp.Next;
+                }
+
+                tmp.Next = new Node(element);
+            }
+        }
+
+        public string Dequeue()
+        {
+            Node tmp = Head;
+
+            while (tmp.Next != null)
+            {
+                if (tmp.Next.Next == null)
+                {
+                    Node remove = tmp.Next;
+                    tmp.Next = null;
+                    return remove.Element;
+                }
+                tmp = tmp.Next;
             }
 
-            string tmp = Top.Element;
-            Top = Top.Next;
-
-            return tmp;
+            Head = null;
+            return tmp.Element;
         }
 
-        public string getTop()
+        public string getHead()
         {
-            if (Top == null)
-            {
-                throw new Exception("empty stack");
-            }
-            return Top.Element;
+            return Head.Element;
         }
 
         public override string ToString()
         {
-            Node iterator = Top;
-            string s = "-\n";
-            while (iterator != null)
+            if (Head == null)
             {
-                s += iterator.Element + "\n";
-                iterator = iterator.Next;
+                return "[]";
             }
-            s += "-";
-            return s;
+
+            string final = "[";
+            Node tmp = Head;
+
+            while (tmp != null)
+            {
+                final += tmp.Element;
+                if (tmp.Next != null)
+                {
+                    final += ", ";
+                }
+                tmp = tmp.Next;
+            }
+
+            final += "]";
+
+            return final;
         }
-
-        public string getInverseOrder()
-        {
-
-
-            MyStack temp = new MyStack();
-            while (this.Top != null)
-            {
-                temp.Push(this.Pop());
-            }
-
-            string s = temp.ToString();
-
-            while (temp.Top != null)
-            {
-                this.Push(temp.Pop());
-            }
-
-            return s;
-        }
-
     }
-
 }
